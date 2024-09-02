@@ -2,6 +2,7 @@
 using namespace std;
 void buildMaxHeap(int heap[], int heapSize);
 void maxHeapify(int heap[], int heapSize, int i);
+void heapSort(int heap[], int heapSize);
 void printF(int heap[], int heapSize);
 int leftIndex(int i);
 int rightIndex(int i);
@@ -9,23 +10,40 @@ int parentIndex(int i);
 
 int main()
 {
-    int heap[] = {0, 1, 2, 3, 4, 5, 6, 7};
-    int heapSize = sizeof(heap) / sizeof(int) - 1;
+    int heap[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    int heapSize = sizeof(heap) / sizeof(int);
 
-    cout << "Heap Size: " << heapSize << "\n";
+    cout << "Heap Size: " << --heapSize << "\n";
 
+    // Frist need to build max heap
     buildMaxHeap(heap, heapSize);
+    printF(heap, heapSize);
 
+    // now call heapsort
+    heapSort(heap, heapSize);
     printF(heap, heapSize);
 
     return 0;
+}
+
+void heapSort(int heap[], int heapSize)
+{
+    int i, t;
+    for (i = heapSize; i > 1; i--)
+    {
+        t = heap[1];
+        heap[1] = heap[i];
+        heap[i] = t;
+        heapSize -= 1;
+        maxHeapify(heap, heapSize, 1);
+    }
 }
 
 void buildMaxHeap(int heap[], int heapSize)
 {
     for (int i = heapSize / 2; i >= 1; i--)
     {
-        cout << "buildMaxHeap: " << i << "\n";
+        // cout << "buildMaxHeap: " << i << "\n";
         maxHeapify(heap, heapSize, i);
     }
 }
@@ -37,7 +55,7 @@ void maxHeapify(int heap[], int heapSize, int i)
     l = leftIndex(i);
     r = rightIndex(i);
 
-    cout << "iiii: " << i << "L:" << leftIndex(i) << "--- R: " << rightIndex(i) << "\n";
+    // cout << "iiii: " << i << "L:" << leftIndex(i) << "--- R: " << rightIndex(i) << "\n";
 
     if (l <= heapSize && heap[l] > heap[i])
     {
@@ -52,16 +70,16 @@ void maxHeapify(int heap[], int heapSize, int i)
     {
         largest = r;
     }
-    cout << " largest: " << largest << "\n";
+    // cout << " largest: " << largest << "\n";
     if (largest != i && largest <= heapSize)
     {
 
-        cout << "------------------";
-        cout << "Hi: " << heap[i] << "HL: " << heap[largest] << "\n";
+        // cout << "------------------";
+        // cout << "Hi: " << heap[i] << "HL: " << heap[largest] << "\n";
         t = heap[i];
         heap[i] = heap[largest];
         heap[largest] = t;
-        cout << "Hi: " << heap[i] << "HL: " << heap[largest] << "\n";
+        // cout << "Hi: " << heap[i] << "HL: " << heap[largest] << "\n";
         maxHeapify(heap, heapSize, largest);
     }
 }
@@ -81,7 +99,7 @@ int parentIndex(int i)
 
 void printF(int heap[], int heapSize)
 {
-    for (int i = 1; i <= heapSize; i++)
+    for (int i = 1; i < heapSize; i++)
     {
         cout << heap[i] << " ";
     }
