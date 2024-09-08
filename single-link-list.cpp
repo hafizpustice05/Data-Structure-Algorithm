@@ -2,11 +2,48 @@
 using namespace std;
 typedef struct node Node;
 
+Node *createNode(int item, Node *next);
+Node *prepend(Node *head, int item);
+Node *append(Node *head, int item);
+Node *searchNode(Node *head, int item);
+Node *removeNode(Node *head, Node *node);
+int nodeCount(Node *head);
+void printLinkList(Node *head);
+void insertNode(Node *node, int item);
+
 struct node
 {
     int data;
     Node *Next;
 };
+
+int main()
+{
+    Node *n1, *n2, *head, *n3, *n4, *n5;
+
+    n1 = createNode(10, NULL);
+    head = n1;
+    printLinkList(head);
+
+    n2 = prepend(head, 20);
+    head = n2;
+    n3 = append(head, 30);
+    head = n3;
+    printLinkList(head);
+
+    cout << "total node: " << nodeCount(head) << "\n";
+    n5 = searchNode(head, 10);
+    cout << "data: " << n5->data << " data->next:" << n5->Next << "\n";
+
+    printLinkList(head);
+    // n3 = searchNode(head, 10);
+    printLinkList(n5);
+    // n4 = removeNode(head, n3);
+    insertNode(n5, 36);
+    printLinkList(head);
+
+    return 0;
+}
 
 Node *createNode(int item, Node *next)
 {
@@ -119,31 +156,4 @@ void insertNode(Node *node, int item)
     Node *newNode = createNode(item, node->Next);
 
     node->Next = newNode;
-}
-int main()
-{
-    Node *n1, *n2, *head, *n3, *n4, *n5;
-
-    n1 = createNode(10, NULL);
-    head = n1;
-    printLinkList(head);
-
-    n2 = prepend(head, 20);
-    head = n2;
-    n3 = append(head, 30);
-    head = n3;
-    printLinkList(head);
-
-    cout << "total node: " << nodeCount(head) << "\n";
-    n5 = searchNode(head, 10);
-    cout << "data: " << n5->data << " data->next:" << n5->Next << "\n";
-
-    printLinkList(head);
-    // n3 = searchNode(head, 10);
-    printLinkList(n5);
-    // n4 = removeNode(head, n3);
-    insertNode(n5, 36);
-    printLinkList(head);
-
-    return 0;
 }
