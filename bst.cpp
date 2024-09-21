@@ -4,11 +4,15 @@ typedef struct node Node;
 
 void addLeftChild(Node *node, Node *child);
 void addRightChild(Node *node, Node *child);
+void printInOrder(Node *node);
 Node *bstInsert(Node *root, Node *node);
 Node *bstSearch(Node *root, int item);
 Node *createNode(int item);
-void printInOrder(Node *node);
 Node *createBST();
+
+Node *bstTransPlant(Node *root,Node *currentNode, Node *newNode);
+Node *bstMinimum(Node *root);
+Node *bstDelete(Node *root, Node *node);
 
 struct node
 {
@@ -23,19 +27,48 @@ int main()
     Node *root;
     root = createBST();
     cout << " hello: BST\n";
+    printInOrder(root);
+
 
     Node *node;
-    node = bstSearch(root, 17);
+    node = bstSearch(root, 1);
     if (node != NULL)
     {
-        cout << "node found: " << node->data << " " << node->Parent << "\n";
+        cout << "\nWill Delete: " << node->data << " " << node->Parent << "\n";
+        root = bstDelete(root,node);
+        cout <<"BST: ";
+        printInOrder(root);
     }
     else
     {
-        cout << "not found";
+        cout << "Node not found";
     }
-    printInOrder(root);
 
+    node = bstSearch(root, 3);
+    if (node != NULL)
+    {
+        cout << "\nWill Delete: " << node->data << " " << node->Parent << "\n";
+        root = bstDelete(root,node);
+        cout <<"BST: ";
+        printInOrder(root);
+    }
+    else
+    {
+        cout << "Node not found";
+    }
+
+    node = bstSearch(root, 17);
+    if (node != NULL)
+    {
+        cout << "\nWill Delete: " << node->data << " " << node->Parent << "\n";
+        root = bstDelete(root,node);
+        cout <<"BST: ";
+        printInOrder(root);
+    }
+    else
+    {
+        cout << "Node not found";
+    }
     return 0;
 }
 
@@ -63,21 +96,13 @@ void addLeftChild(Node *node, Node *child)
     }
 }
 
-void addRightChildLLL(Node *node, Node *child)
+void addRightChild(Node *node, Node *child)
 {
     node->Right = child;
+
     if (child != NULL)
     {
         child->Parent = node;
-    }
-}
-void addRightChild(Node *node, Node *chil)
-{
-    node->Right = chil;
-
-    if (chil != NULL)
-    {
-        chil->Parent = node;
     }
 }
 
@@ -116,18 +141,28 @@ Node *bstInsert(Node *root, Node *node)
     return root;
 }
 
+/**
+ *                 10
+ *               /    \
+ *             5       17
+ *            / \     /  \ 
+ *          3   7   12   19
+ *         / \        \  /  \
+ *        1   4       13 18 20
+ */
+
 Node *createBST()
 {
     Node *root, *node;
     int i;
     root = createNode(10);
-    int ara[8] = {5, 17, 3, 7, 12, 19, 1, 4};
-    for (i = 0; i < 8; i++)
+    int arr[] = {5, 17, 3, 7, 12, 19, 1, 4,13,18,20,21};
+    for (i = 0; i < 4; i++)
     {
-        node = createNode(ara[i]);
+        node = createNode(arr[i]);
         root = bstInsert(root, node);
     }
-
+    // printInOrder(root);
     return root;
 }
 
@@ -164,4 +199,76 @@ Node *bstSearch(Node *root, int item)
         }
     }
     return currentNode;
+}
+Node *bstTransPlant(Node *root,Node *currentNode, Node *newNode)
+{
+    if(currentNode==root){
+        root=newNode;
+        return root;
+    }else if(currentNode==currentNode->Parent->Left){
+        addLeftChild(currentNode->Parent,newNode);
+    }else{
+        addRightChild(currentNode->Parent,newNode);
+    }
+    return root;
+
+}
+Node *bstMinimum(Node *root)
+{
+    Node *node=root;
+
+    while(node->Left!=NULL){
+        node=node->Left;
+    }
+    return node;
+}
+
+Node *bstDelete(Node *root, Node *node)
+{
+    Node *smallestNode;
+
+    if (node->Left==NULL){
+        /**
+         * There are no node in the left child
+         * So node will be the changed with right child
+         */
+        root=bstTransPlant(root,node,node->Right);
+    }else if(node->Right==NULL){
+        /**
+         * There are no node in the right child
+         * So node will be changed with left node
+         */
+        root = bstTransPlant(root, node,node->Left);
+    }else{
+        /**
+         * There has a two node in left & right node
+         * So find lowest node in the right subTree
+         */
+        smallestNode=bstMinimum(node->Right);
+        
+        /**
+         * isnt smallestNode directly child in root node 
+         */
+        if(smallestNode->Parent!=node){
+            /**
+             * smallestNode will be changed with the right node of smallest node
+             */
+            root=bstTransPlant(root, smallestNode,smallestNode->Right);
+            /**
+             * Smallest node will be parent of node's right subtree 
+             */
+            addRightChild(smallestNode, node->Right);
+        }
+        /**
+         * Node will be changed with smallest node
+         */
+        root=bstTransPlant(root,node,smallestNode);
+        
+        /**
+         * SmallestNode will be the parent of the Node's left
+         */
+        addLeftChild(smallestNode,node->Left);
+    }
+    free(node);
+    return root;
 }
